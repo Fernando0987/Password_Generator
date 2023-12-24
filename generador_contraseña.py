@@ -1,16 +1,18 @@
 import random
 import string
 import getpass
+import tkinter as tk
+from tkinter import messagebox
 
-def generar_contraseña(longitud, incluir_mayusculas=True, incluir_minusculas=True, incluir_numeros=True, incluir_simbolos=True):
+def generar_contraseña(longitud, *inclusiones):
     caracteres = ''
-    if incluir_mayusculas:
+    if inclusiones[0]:
         caracteres += string.ascii_uppercase
-    if incluir_minusculas:
+    if inclusiones[1]:
         caracteres += string.ascii_lowercase
-    if incluir_numeros:
+    if inclusiones[2]:
         caracteres += string.digits
-    if incluir_simbolos:
+    if inclusiones[3]:
         caracteres += string.punctuation
     contraseña = ''.join(random.choice(caracteres) for _ in range(longitud))
     return contraseña
@@ -18,29 +20,61 @@ def generar_contraseña(longitud, incluir_mayusculas=True, incluir_minusculas=Tr
 def guardar_contraseña(contraseña, archivo):
     with open(archivo, 'a') as f:
         f.write(contraseña + '\n')
-    print("Contraseña guardada en el archivo:", archivo)
+    messagebox.showinfo("Contraseña guardada", f"La contraseña ha sido guardada en el archivo: {archivo}")
 
-def mostrar_contraseña(contraseña):
-    print("Contraseña generada:")
-    print(contraseña)
+def generar_y_mostrar_contraseña():
+    longitud = int(entry_longitud.get())
+    inclusiones = (
+        var_mayusculas.get(),
+        var_minusculas.get(),
+        var_numeros.get(),
+        var_simbolos.get()
+    )
+    contraseña = generar_contraseña(longitud, *inclusiones)
+    label_contraseña.config(text=contraseña)
 
-# Ejemplo de uso
-longitud = int(input("Ingrese la longitud de la contraseña: "))
-incluir_mayusculas = input("¿Incluir letras mayúsculas? (s/n): ").lower() == 's'
-incluir_minusculas = input("¿Incluir letras minúsculas? (s/n): ").lower() == 's'
-incluir_numeros = input("¿Incluir números? (s/n): ").lower() == 's'
-incluir_simbolos = input("¿Incluir símbolos de puntuación? (s/n): ").lower() == 's'
-contraseña = generar_contraseña(longitud, incluir_mayusculas, incluir_minusculas, incluir_numeros, incluir_simbolos)
-mostrar_contraseña(contraseña)
+    if var_guardar.get() == 1:
+        archivo = entry_archivo.get()
+        guardar_contraseña(contraseña, archivo)
 
-guardar = input("¿Desea guardar la contraseña en un archivo o en un gestor de contraseñas? (archivo/gestor): ").lower()
-if guardar == 'archivo':
-    archivo = input("Ingrese el nombre del archivo para guardar la contraseña: ")
-    guardar_contraseña(contraseña, archivo)
-elif guardar == 'gestor':
-    usuario = input("Ingrese su nombre de usuario: ")
-    contraseña_maestra = getpass.getpass("Ingrese su contraseña maestra: ")
-    # Aquí iría el código para guardar la contraseña en un gestor de contraseñas
-    print("Contraseña guardada en el gestor de contraseñas.")
-else:
-    print("Opción no válida.")
+# Crear la ventana
+ventana = tk.Tk()
+ventana.title("Generador de Contraseñas")
+
+# Crear y posicionar los elementos
+label_longitud = tk.Label(ventana, text="Longitud de la contraseña:")
+label_longitud.pack()
+entry_longitud = tk.Entry(ventana)
+entry_longitud.pack()
+
+var_mayusculas = tk.IntVar()
+var_minusculas = tk.IntVar()
+var_numeros = tk.IntVar()
+var_simbolos = tk.IntVar()
+
+check_mayusculas = tk.Checkbutton(ventana, text="Incluir letras mayúsculas", variable=var_mayusculas)
+check_mayusculas.pack()
+check_minusculas = tk.Checkbutton(ventana, text="Incluir letras minúsculas", variable=var_minusculas)
+check_minusculas.pack()
+check_numeros = tk.Checkbutton(ventana, text="Incluir números", variable=var_numeros)
+check_numeros.pack()
+check_simbolos = tk.Checkbutton(ventana, text="Incluir símbolos de puntuación", variable=var_simbolos)
+check_simbolos.pack()
+
+button_generar = tk.Button(ventana, text="Generar y Mostrar Contraseña", command=generar_y_mostrar_contraseña)
+button_generar.pack()
+
+label_contraseña = tk.Label(ventana, text="")
+label_contraseña.pack()
+
+var_guardar = tk.IntVar()
+check_guardar = tk.Checkbutton(ventana, text="Guardar en archivo", variable=var_guardar)
+check_guardar.pack()
+
+label_archivo = tk.Label(ventana, text="Nombre del archivo:")
+label_archivo.pack()
+entry_archivo = tk.Entry(ventana)
+entry_archivo.pack()
+
+# Ejecutar la ventana
+ventana.mainloop()
