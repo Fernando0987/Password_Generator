@@ -1,0 +1,1 @@
+Este software y su código fuente tienen la licencia MIT. Significa que puede usarse tanto para fines personales como comerciales, sin costos ni restricciones, y modificarse según sea necesario por los desarrolladores. Se debe otorgar crédito al autor original de este código en todo momento”
